@@ -1,0 +1,34 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.14, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\aaron\AppData\Local\Microsoft\WindowsApps\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\aaron\Desktop\cmpe273\cmpe273-module7
+collecting ... collected 26 items
+
+tests/test_order_processor.py::test_new_order_starts_empty PASSED        [  3%]
+tests/test_order_processor.py::test_version_1_is_applied PASSED          [  7%]
+tests/test_order_processor.py::test_version_2_before_version_1_is_buffered PASSED [ 11%]
+tests/test_order_processor.py::test_late_version_1_applies_version_1_then_buffered_version_2 PASSED [ 15%]
+tests/test_order_processor.py::test_duplicate_version_2_is_ignored PASSED [ 19%]
+tests/test_order_processor.py::test_duplicate_pending_event_is_not_stored_twice PASSED [ 23%]
+tests/test_order_processor.py::test_version_3_without_earlier_versions_stays_pending PASSED [ 26%]
+tests/test_order_processor.py::test_missing_versions_are_identified PASSED [ 30%]
+tests/test_order_processor.py::test_buffer_drains_when_missing_versions_arrive PASSED [ 34%]
+tests/test_order_processor.py::test_invalid_status_version_combination_is_rejected[v1-PAID] PASSED [ 38%]
+tests/test_order_processor.py::test_invalid_status_version_combination_is_rejected[v2-SHIPPED] PASSED [ 42%]
+tests/test_order_processor.py::test_invalid_status_version_combination_is_rejected[v3-CREATED] PASSED [ 46%]
+tests/test_order_processor.py::test_invalid_status_version_combination_is_rejected[unknown-v4] PASSED [ 50%]
+tests/test_order_processor.py::test_invalid_status_version_combination_is_rejected[v0] PASSED [ 53%]
+tests/test_order_processor.py::test_invalid_event_does_not_change_existing_state_or_buffer PASSED [ 57%]
+tests/test_order_processor.py::test_conflicting_pending_event_does_not_overwrite_buffer PASSED [ 61%]
+tests/test_order_processor.py::test_worker_with_newer_token_is_accepted PASSED [ 65%]
+tests/test_order_processor.py::test_worker_with_older_token_is_rejected PASSED [ 69%]
+tests/test_order_processor.py::test_rejected_stale_worker_does_not_modify_order PASSED [ 73%]
+tests/test_order_processor.py::test_current_worker_can_repeat_valid_operations PASSED [ 76%]
+tests/test_order_processor.py::test_worker_updates_still_respect_version_order PASSED [ 80%]
+tests/test_order_processor.py::test_token_generator_is_monotonic_under_concurrency PASSED [ 84%]
+tests/test_order_processor.py::test_different_orders_have_independent_state PASSED [ 88%]
+tests/test_order_processor.py::test_fencing_tokens_are_tracked_per_order PASSED [ 92%]
+tests/test_order_processor.py::test_full_lifecycle_created_paid_shipped PASSED [ 96%]
+tests/test_order_processor.py::test_apply_event_refuses_to_skip_a_version PASSED [100%]
+
+============================= 26 passed in 0.05s ==============================

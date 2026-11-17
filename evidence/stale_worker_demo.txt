@@ -1,0 +1,43 @@
+========================================
+DEMO 3: STALE WORKER REJECTION
+========================================
+Event versions decide the ORDER of business events.
+Fencing tokens decide WHICH WORKER may write to the order.
+
+> Token service grants ownership of ORDER-003 to Worker-A
+  Worker-A received fencing token 1
+> Worker-A (token 1) attempts update: ORDER-003 v1 CREATED
+  [TOKEN]    Worker-A token 1 supersedes token 0
+  [APPLIED]  ORDER-003 v1 CREATED: was the expected next version
+  Outcome: APPLIED
+  State: order=ORDER-003 version=1 status=CREATED pending=[] missing=[] highest_fencing_token=1
+  [OK] Worker-A (token 1) created the order
+
+> Worker-A stalls (e.g. GC pause); token service grants ownership to Worker-B
+  Worker-B received fencing token 2
+> Worker-B (token 2) attempts update: ORDER-003 v2 PAID
+  [TOKEN]    Worker-B token 2 supersedes token 1
+  [APPLIED]  ORDER-003 v2 PAID: was the expected next version
+  Outcome: APPLIED
+  State: order=ORDER-003 version=2 status=PAID pending=[] missing=[] highest_fencing_token=2
+  [OK] Worker-B (token 2) update accepted
+  [OK] order now records highest token 2
+
+> Worker-A wakes up, still believes it owns the order, and tries to write
+> Worker-A (token 1) attempts update: ORDER-003 v3 SHIPPED
+  [REJECTED] Worker-A (token 1) -> ORDER-003 v3 SHIPPED: stale fencing token, order already accepted token 2
+  Outcome: REJECTED
+  State: order=ORDER-003 version=2 status=PAID pending=[] missing=[] highest_fencing_token=2
+  [OK] stale Worker-A (token 1) rejected
+  [OK] order state unchanged after rejection (v2 PAID, nothing pending)
+  [OK] highest token still 2
+
+> Worker-B (current owner) continues with the next update
+> Worker-B (token 2) attempts update: ORDER-003 v3 SHIPPED
+  [APPLIED]  ORDER-003 v3 SHIPPED: was the expected next version
+  Outcome: APPLIED
+  State: order=ORDER-003 version=3 status=SHIPPED pending=[] missing=[] highest_fencing_token=2
+  [OK] Worker-B (token 2) can keep writing
+  [OK] order reached v3 SHIPPED
+
+RESULT: DEMO 3 PASS

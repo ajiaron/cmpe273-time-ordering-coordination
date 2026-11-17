@@ -1,0 +1,38 @@
+========================================
+DEMO 1: OUT-OF-ORDER EVENT DELIVERY
+========================================
+Delivery order: v2 PAID -> v1 CREATED -> v2 PAID (duplicate) -> v3 SHIPPED
+
+> Incoming event (step 1): ORDER-001 v2 PAID
+  [BUFFERED] ORDER-001 v2 PAID: expected v1; missing versions [1]
+  Outcome: BUFFERED
+  State: order=ORDER-001 version=0 status=NONE pending=[2] missing=[1] highest_fencing_token=0
+  [OK] v2 was buffered
+  [OK] state still v0 NONE
+  [OK] pending versions are [2]
+  [OK] missing version 1 identified
+
+> Incoming event (step 2): ORDER-001 v1 CREATED
+  [APPLIED]  ORDER-001 v1 CREATED: was the expected next version
+  [APPLIED]  ORDER-001 v2 PAID: drained from pending buffer
+  Outcome: APPLIED
+  State: order=ORDER-001 version=2 status=PAID pending=[] missing=[] highest_fencing_token=0
+  [OK] v1 was applied
+  [OK] buffered v2 auto-applied -> v2 PAID
+  [OK] pending buffer is empty
+
+> Incoming event (step 3, duplicate): ORDER-001 v2 PAID
+  [IGNORED]  ORDER-001 v2 PAID: version 2 already processed (current version is 2)
+  Outcome: IGNORED
+  State: order=ORDER-001 version=2 status=PAID pending=[] missing=[] highest_fencing_token=0
+  [OK] duplicate v2 was ignored
+  [OK] state still v2 PAID
+
+> Incoming event (step 4): ORDER-001 v3 SHIPPED
+  [APPLIED]  ORDER-001 v3 SHIPPED: was the expected next version
+  Outcome: APPLIED
+  State: order=ORDER-001 version=3 status=SHIPPED pending=[] missing=[] highest_fencing_token=0
+  [OK] v3 was applied
+  [OK] lifecycle complete -> v3 SHIPPED
+
+RESULT: DEMO 1 PASS

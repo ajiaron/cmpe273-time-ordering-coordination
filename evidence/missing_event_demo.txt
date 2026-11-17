@@ -1,0 +1,23 @@
+========================================
+DEMO 2: MISSING EVENT DETECTION
+========================================
+Only v3 SHIPPED is delivered; v1 and v2 never arrive.
+
+> Incoming event (only event): ORDER-002 v3 SHIPPED
+  [BUFFERED] ORDER-002 v3 SHIPPED: expected v1; missing versions [1, 2]
+  Outcome: BUFFERED
+  State: order=ORDER-002 version=0 status=NONE pending=[3] missing=[1, 2] highest_fencing_token=0
+
+Final order state:
+  Current version:  0
+  Status:           NONE
+  Pending versions: [3]
+  Missing versions: [1, 2]
+
+  [OK] v3 was buffered, not applied
+  [OK] current version remains 0
+  [OK] status remains NONE (not SHIPPED)
+  [OK] v3 stored in pending events
+  [OK] missing versions 1 and 2 reported
+
+RESULT: DEMO 2 PASS
